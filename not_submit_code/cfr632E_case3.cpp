@@ -1,6 +1,6 @@
 /*
 https://codeforces.com/contest/1333/problem/E
-3x3の場合にstrictly less vunsな盤面があるかを全探索した。
+3x3の場合にrook pays strictly less vuns than the queenな盤面があるかを全探索した。
 */
 
 #include <bits/stdc++.h>
