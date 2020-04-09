@@ -1,3 +1,8 @@
+/*
+https://codeforces.com/contest/1333/problem/E
+3x3の場合にstrictly less vunsな盤面があるかを全探索した。
+*/
+
 #include <bits/stdc++.h>
 using namespace std;
 typedef long long ll;
