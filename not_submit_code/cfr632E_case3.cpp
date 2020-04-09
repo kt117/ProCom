@@ -21,9 +21,10 @@ ll pena(vector<ll> v, bool q){
 
 	ll ai, aj;
 	zep(i, 0, 3){zep(j, 0, 3){if(m[i][j] == 1){ai = i; aj = j;}}}
-	
+	use[ai][aj] = true;
+
 	ll res = 0;
-	zep(t, 0, 9){
+	zep(t, 1, 9){
 		ll ni, nj;
 		ll mi = INF;
 
@@ -49,6 +50,7 @@ ll pena(vector<ll> v, bool q){
 			}
 		}
 		ai = ni; aj = nj;
+		use[ai][aj] = true;
 	}
 	return res;
 }
@@ -61,7 +63,7 @@ int main(){
 	
 	do{
 		if(pena(v, false) < pena(v, true)){
-			print("ok")
+			printa(v, 0, 8)
 			break;
 		}
 	}while(next_permutation(v.begin(), v.end()));
