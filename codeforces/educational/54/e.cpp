@@ -10,45 +10,38 @@ const ll INF = 1e18;
 #define print(x) cout << (x) << endl;
 #define printa(x,m,n) for(int i = (m); i <= n; i++){cout << (x[i]) << " ";} cout<<endl;
 
+const ll N = 3e5 + 10;
 ll n, m;
-vector<vector<ll>> g, cnt;
+vector<ll> ans(N), sg(N, 0);
+vector<vector<ll>> g;
+vector<vector<P>> q;
 
+void dfs(ll at, ll from, ll cur){
+    zep(i, 0, q[at].size()){
+        sg[cur] += q[at][i].second;
+        if(cur + q[at][i].first + 1 < N)sg[cur + q[at][i].first + 1] -= q[at][i].second;
+    }
+    sg[cur] += sg[cur - 1];
 
-void dfs(ll at, ll from){
+    ans[at] = sg[cur];
+
     zep(i, 0, g[at].size()){
         ll nx = g[at][i];
-        if(nx != from)dfs(nx, at);
+        if(nx != from)dfs(nx, at, cur + 1);
     }
 
-    ll l = 0;
-    zep(i, 0, g[at].size()){
-        ll nx = g[at][i];
-        if(nx != from)l = max(l, cnt[nx].size);
-    }
-    
-    vector<ll> res(l + 1, 0);
-    res[0]++;
-    zep(i, 0, g[at].size()){
-        ll nx = g[at][i];
-        if(nx != from){
-            zep(j, 0, cnt[nx].size()){
-                res[at][j + 1] += cnt[nx][j];
-            }
-        }
-    }
+    sg[cur] -= sg[cur - 1];
 
-    zep(j, 0, res.size() - 1){
-        res[i + 1] += res[i];
+    zep(i, 0, q[at].size()){
+        sg[cur] -= q[at][i].second;
+        if(cur + q[at][i].first + 1 < N)sg[cur + q[at][i].first + 1] += q[at][i].second;
     }
-
-    cnt[at].swap(res);
 }
-
 
 int main(){
     cin.tie(0); ios::sync_with_stdio(false);
     
-    cin >> n >> m;
+    cin >> n;
     g.resize(n);
     zep(i, 0, n - 1){
         ll x, y; cin >> x >> y;
@@ -57,17 +50,17 @@ int main(){
         g[y].push_back(x);
     }
 
-    dfs(0, -1);
-
-    ll ans = 0;
+    cin >> m;
+    q.resize(n);
     zep(i, 0, m){
         ll v, d, x; cin >> v >> d >> x;
         v--;
-        d = min(d, ll(cnt[v].size() - 1));
-        
-        ans += cnt[v][d] * x;
+        q[v].push_back(P(d, x));
     }
-    print(ans)
+
+    dfs(0, -1, 1);
+
+    printa(ans, 0, n - 1)
 
     return 0;
 }
