@@ -1,4 +1,5 @@
 import os
+import sys
 
 
 def create_file(path):
@@ -13,5 +14,6 @@ def create_file(path):
             with open(file_path, mode='w') as f:
                 f.write(s)
 
-path = "codeforces/educational/52"
-create_file(path)
+
+args = sys.argv
+create_file(args[1])
