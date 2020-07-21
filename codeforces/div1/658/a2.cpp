@@ -10,10 +10,6 @@ const ll INF = 1e18;
 #define print(x) cout << (x) << endl;
 #define printa(x,m,n) for(int i = (m); i <= n; i++){cout << (x[i]) << " ";} cout<<endl;
 
-char r(char c){
-    return (c == '0')? '1' : '0';
-}
-
 int main(){
     cin.tie(0); ios::sync_with_stdio(false);
     
@@ -23,33 +19,31 @@ int main(){
         string a, b; cin >> a >> b;
 
         vector<ll> ans;
-        bool turn = false, rev = false;
+        bool turn = false;
         ll l = 0, r = n - 1;
 
         rrep(i, n - 1, 0){
             if(!turn){
-                if((!rev && a[r] != b[i]) || (rev && a[r] == b[i])){
-                    if((!rev && a[l] == b[i]) || (rev && a[l] != b[i])){
+                if(a[r] != b[i]){
+                    if(a[l] == b[i]){
                         ans.push_back(0);
                     }
 
                     ans.push_back(i);
                     l++;
                     turn = !turn;
-                    rev = !rev;
                 }else{
                     r--;
                 }
             }else{
-                if((!rev && a[l] != b[i]) || (rev && a[l] == b[i])){
-                    if((!rev && a[r] == b[i]) || (rev && a[r] != b[i])){
+                if(a[l] == b[i]){
+                    if(a[r] != b[i]){
                         ans.push_back(0);
                     }
 
                     ans.push_back(i);
                     r--;
                     turn = !turn;
-                    rev = !rev;
                 }else{
                     l++;
                 }
