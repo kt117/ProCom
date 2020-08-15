@@ -10,16 +10,27 @@ const ll INF = 1e18;
 #define print(x) cout << (x) << endl;
 #define printa(x,m,n) for(int i = (m); i <= n; i++){cout << (x[i]) << " ";} cout<<endl;
 
-ll n, tp, d, k, sm, smk; 
-map<int, bool> s;
-priority_queue<int> sk, sf, sl;
+ll n, tp, d, sm, smk; 
+map<ll, ll> mp;
+set<ll> sk, s[2];
+
+void g(){
+    ll index = 0;
+    if(s[0].empty() || *s[0].rbegin() < *s[1].rbegin()){
+        index = 1;
+    }
+    ll tmp = *s[index].rbegin();
+    s[index].erase(tmp);
+    sk.insert(tmp);
+    smk += tmp;
+}
 
 ll f(){
     ll res = sm + smk;
 
-    if(sl.empty() && !sk.empty()){
-        res += sk.top();
-        if(!sf.empty())res += sf.top();
+    if(s[1].empty() && !sk.empty()){
+        res -= *sk.begin();
+        if(!s[0].empty())res += *s[0].rbegin();
     }
 
     return res;
@@ -34,70 +45,44 @@ int main(){
         sm += d;
 
         if(d > 0){
-            s[d] = (tp == 0);
+            mp[d] = tp;
 
             if(tp == 0){
-                sk.push(-d);
-                ll tmp = -sk.top(); sk.pop();
+                sk.insert(d);
+
+                ll tmp = *sk.begin(); sk.erase(tmp);
                 smk += d - tmp;
-
-                if(s[tmp]){
-                    sf.push(tmp);
-                }else{
-                    sl.push(tmp);
-                }
+                s[mp[tmp]].insert(tmp);
             }else{
-                k++;
-                sl.push(d);
+                s[1].insert(d);
 
-                if(sf.empty() || sf.top() < sl.top()){
-                    sk.push(-sl.top());
-                    smk += sl.top();
-                    sl.pop();
-                }else{
-                    sk.push(-sf.top());
-                    smk += sf.top();
-                    sf.pop();
-                }
+                g();
             }
         }else{
             d *= -1;
 
-            if(!sk.empty() && d >= -sk.top()){
-                smk -= d;
-
-                if(sf.empty() || (!sl.empty() && sf.top() < sl.top())){
-                    sk.push(-sl.top());
-                    smk += sl.top();
-                    sl.pop();
-                }else{
-                    sk.push(-sf.top());
-                    smk += sf.top();
-                    sf.pop();
-                }
-            }
-
             if(tp == 1){
-                k--;
-
-                ll tmp = -sk.top(); sk.pop();
+                ll tmp = *sk.begin(); sk.erase(tmp);
                 smk -= tmp;
-
-                if(s[tmp]){
-                    sf.push(tmp);
-                }else{
-                    sl.push(tmp);
-                }
+                s[mp[tmp]].insert(tmp);
             }
 
-            s.erase(d);
+            if(sk.find(d) != sk.end()){
+                smk -= d;
+                sk.erase(d);
+
+                g();
+            }else{
+                s[tp].erase(d);
+            }
+
+            mp.erase(d);
         }
 
-        while(!sk.empty() && s.find(-sk.top()) == s.end())sk.pop();
-        while(!sf.empty() && s.find(sf.top()) == s.end())sf.pop();
-        while(!sl.empty() && s.find(sl.top()) == s.end())sl.pop();
-
         print(f())
+        //for(auto it = sk.begin(); it != sk.end(); it++)cout << (*it) << " "; cout << endl;
+        //for(auto it = s[0].begin(); it != s[0].end(); it++)cout << (*it) << " "; cout << endl;
+        //for(auto it = s[1].begin(); it != s[1].end(); it++)cout << (*it) << " "; cout << endl;
     }
 
     return 0;
