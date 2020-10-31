@@ -32,41 +32,59 @@ long long COM(int n, int k){
     return fac[n] * (finv[k] * finv[n - k] % MOD) % MOD;
 }
 
-long long powmod(long long a, long long x){
-    if(x == 0)return 1;
-    long long r = powmod(a, x / 2);
-    return (x%2)? (r * r % MOD) * a % MOD : r * r % MOD;
-}
+ll n, k, a[200008], pa[310][200008], ax[310], tr[310];
 
 int main(){
     cin.tie(0); ios::sync_with_stdio(false);
     
     COMinit();
 
-    ll n, k; cin >> n >> k;
-    ll a[n]; zep(i, 0, n)cin >> a[i];
-    
-    ll sm = 0;
+    cin >> n >> k;
+    zep(i, 0, n)cin >> a[i];
+    zep(i, 0, n)pa[0][i] = 1;
+
     zep(i, 0, n){
-        sm += a[i]; sm %= MOD;
+        rep(j, 1, k){
+            pa[j][i] = pa[j - 1][i] * a[i] % MOD;
+        }
     }
 
-    ll f = (n - 1) * sm % MOD;
-    print(f)
+    rep(x, 0, k){
+        zep(i, 0, n){
+            ax[x] += pa[x][i];
+            ax[x] %= MOD;
+        }
+        ax[x] *= finv[x];
+        ax[x] %= MOD;
+    }
 
-    rep(j, 2, k){
-        ll sump = 0;
-        zep(i, 0, n){sump += powmod(a[i], j); sump %= MOD;}
-        //print(sump)
-        f *= (n - 1) * sm % MOD;
-        f %= MOD;
-        print(f)
-        f += MOD - 2 * (n - 1) % MOD * inv[j] % MOD * ((powmod(sm, j) + MOD - sump) % MOD) % MOD;
-        f %= MOD;
-        print(f)
-        f *= inv[n - 1];
-        f %= MOD;
-        print(f)
+    zep(i, 0, n){
+        rep(j, 1, k){
+            pa[j][i] = pa[j - 1][i] * 2 * a[i] % MOD;
+        }
+    }
+
+    rep(x, 1, k){
+        zep(i, 0, n){
+            tr[x] += pa[x][i];
+            tr[x] %= MOD;
+        }
+    }
+
+    rep(x, 1, k){
+        ll ans = 0;
+        
+        rep(xx, 0, x){
+            ans += ax[xx] * ax[x - xx] % MOD;
+            ans %= MOD;
+        }
+        ans *= fac[x];
+        ans %= MOD;
+        ans += MOD - tr[x];
+        ans %= MOD;
+        ans *= (MOD + 1) / 2;
+        ans %= MOD;
+        print(ans)
     }
     
     return 0;
