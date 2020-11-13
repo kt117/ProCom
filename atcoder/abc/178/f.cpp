@@ -10,59 +10,43 @@ const ll INF = 1e18;
 #define print(x) cout << (x) << endl;
 #define printa(x,m,n) for(int i = (m); i <= n; i++){cout << (x[i]) << " ";} cout<<endl;
 
-ll n, a[200020], b[200020], cnt[200020][2];
-
 int main(){
     cin.tie(0); ios::sync_with_stdio(false);
     
-    cin >> n;
-    zep(i, 0, n)cin >> a[i];
-    zep(i, 0, n)cin >> b[i];
+    ll n; cin >> n;
+    ll a[n]; zep(i, 0, n)cin >> a[i];
+    ll b[n]; zep(i, 0, n)cin >> b[i];
 
+    ll cnt[n + 1]; memset(cnt, 0, sizeof(cnt));
     zep(i, 0, n){
-        cnt[a[i]][0]++;
-        cnt[b[i]][1]++;
+        cnt[a[i]]++;
+        cnt[b[i]]++;
     }
-
     rep(i, 1, n){
-        if(cnt[i][0] + cnt[i][1] > n){
+        if(cnt[i] > n){
             print("No")
             return 0;
         }
     }
-    
-    priority_queue<vector<ll>> q;
-    rep(i, 1, n){
-        if(cnt[i][1] > 0)q.push({cnt[i][0] + cnt[i][1], i, cnt[i][1]});
-    }
-    
-    vector<P> u;
-    rep(i, 1, n)if(cnt[i][0] > 0)u.push_back(P(cnt[i][0], i));
-    sort(u.begin(), u.end(), greater<>());
-    
-    vector<vector<int>> v(n + 1);
-    zep(i, 0, u.size()){
-        zep(j, 0, u[i].first){
-            auto p = q.top(); q.pop();
-            
-            if(p[1] == u[i].second){
-                auto tmp = p;
-                p = q.top(); q.pop();
-                q.push(tmp);
-            }
-            
-            v[u[i].second].push_back(p[1]);
-            p[2]--;
-            if(p[2] > 0)q.push(p);
+    print("Yes")
+
+    reverse(b, b + n);
+    vector<ll> u, v;
+    ll x = -1;
+    zep(i, 0, n){
+        if(a[i] == b[i]){
+            u.push_back(i);
+            x = b[i];
         }
     }
-    
-    print("Yes")
-    zep(i, 0, n){
-        cout << v[a[i]].back() << " ";
-        v[a[i]].pop_back();
+    zep(i, 0, n)if(a[i] != x && b[i] != x)v.push_back(i);
+
+    zep(i, 0, u.size()){
+        ll tmp = b[u[i]];
+        b[u[i]] = b[v[i]];
+        b[v[i]] = tmp;
     }
-    cout << endl;
-    
+    printa(b, 0, n - 1)
+
     return 0;
 }
