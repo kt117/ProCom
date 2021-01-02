@@ -10,55 +10,37 @@ const ll INF = 1e18;
 #define print(x) cout << (x) << endl;
 #define printa(x,m,n) for(int i = (m); i <= n; i++){cout << (x[i]) << " ";} cout<<endl;
 
-ll n, m, a[20][10010]; 
+ll n, m, a[20][10010], u[20][20], d[20][20];
 
-bool f(ll x){
-    bool u[n][n], d[n][n];
-    memset(u, 1, sizeof(u));
-    memset(d, 1, sizeof(d));
-    zep(i, 0, n){
-        zep(j, 0, n){
-            zep(k, 0, m){
-                if(k > 0 && abs(a[i][k - 1] - a[j][k]) < x)u[i][j] = false;
-                if(abs(a[i][k] - a[j][k]) < x)d[i][j] = false;
-            }
-        }
-    }
+ll f(){
+    ll res = 0;
 
     zep(i, 0, n){
-        ll dp[(1LL << n)]; memset(dp, 0, sizeof(dp));
-        dp[(1LL << i)] = (1LL << i);
-        bool use[(1LL << n)]; memset(use, 0, sizeof(use));
-        use[(1LL << i)] = true;
+        ll dp[1LL << n][n]; memset(dp, -1, sizeof(dp));
+        dp[(1LL << i)][i] = INF;
+        bool use[1LL << n]; memset(use, 0, sizeof(use));
+        use[1LL << i] = true;
         queue<ll> q;
         q.push((1LL << i));
         
         while(!q.empty()){
-            ll x = q.front(); q.pop();
+            ll at = q.front(); q.pop();
             zep(j, 0, n){
-                if(x & (1LL << j)){
-                    zep(k, 0, n){
-                        if(!(x & (1LL << k)) && d[j][k]){
-                            ll nx = (x | (1LL << k));
-                            dp[nx] |= (1LL << k);
-                            
-                            if(!use[nx]){
-                                use[nx] = true;
-                                q.push(nx);
-                            }
-                        }
+                zep(k, 0, n){
+                    if((at & (1LL << j)) && !(at & (1LL << k))){
+                        ll nx = (at | (1LL << k));
+                        if(!use[nx]){use[nx] = true; q.push(nx);}
+                        dp[nx][k] = max(dp[nx][k], min(dp[at][j], d[j][k]));
                     }
                 }
             }
         }
 
         zep(j, 0, n){
-            if((dp[(1LL << n) - 1] & (1LL << j)) && u[j][i]){
-                return true;
-            }
+            res = max(res, min(dp[(1LL << n) - 1][j],  u[j][i]));
         }
     }
-    return false;
+    return res;
 }
 
 int main(){
@@ -67,17 +49,16 @@ int main(){
     cin >> n >> m;
     zep(i, 0, n)zep(j, 0, m)cin >> a[i][j];
     
-    ll ok = 0;
-    ll ng = 1e9;
-    while(ng - ok > 1){
-        ll mid = (ok + ng) / 2;
-        if(f(mid)){
-            ok = mid;
-        }else{
-            ng = mid;
+    zep(i, 0, n){
+        zep(j, 0, n){
+            d[i][j] = INF;
+            u[i][j] = INF;
+            zep(k, 0, m)d[i][j] = min(d[i][j], abs(a[i][k] - a[j][k]));
+            zep(k, 1, m)u[i][j] = min(u[i][j], abs(a[i][k - 1] - a[j][k]));
         }
     }
-    print(ok)
+
+    print(f())
     
     return 0;
 }
