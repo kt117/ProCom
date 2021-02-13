@@ -13,7 +13,19 @@ const ll INF = 1e18;
 int main(){
     cin.tie(0); ios::sync_with_stdio(false);
     
-    
+    ll n, x; cin >> n >> x;
+    ll a[n]; zep(i, 0, n)cin >> a[i];
+
+    vector<ll> ans;
+    zep(i, 0, n){
+        if(a[i] != x){
+            ans.push_back(a[i]);
+        }
+    }
+
+    zep(i, 0, ans.size()){
+        cout << ans[i] << " ";
+    }cout << endl;
     
     return 0;
 }

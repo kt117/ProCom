@@ -13,7 +13,13 @@ const ll INF = 1e18;
 int main(){
     cin.tie(0); ios::sync_with_stdio(false);
     
-    
+    ll v, t, s, d; cin >> v >> t >> s >> d;
+
+    if(d < v * t || v * s < d){
+        print("Yes")
+    }else{
+        print("No")
+    }
     
     return 0;
 }

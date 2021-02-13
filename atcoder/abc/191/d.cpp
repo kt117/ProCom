@@ -13,7 +13,23 @@ const ll INF = 1e18;
 int main(){
     cin.tie(0); ios::sync_with_stdio(false);
     
-    
+    double x, y, r; cin >> x >> y >> r;
+
+    ll ans = 0;
+    rep(i, floor(x - r), ceil(x + r)){
+        ll ok = ceil(y);
+        ll ng = ceil(y + r);
+        
+
+        while(ng - ok > 1){
+            double mid = (ok + ng) / 2;
+            if(f(mid)){
+                ok = mid;
+            }else{
+
+            }
+        }
+    }
     
     return 0;
 }
