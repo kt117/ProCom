@@ -34,7 +34,7 @@ int main(){
             }else{
                 if(x[j] > mx){
                     ll l = (x[j] - mx + sm - 1) / sm;
-                    ans[j] += m * l;
+                    ans[j] += n * l;
                     x[j] -= sm * l;
                 }
                 ans[j] += (*(mp.lower_bound(x[j]))).second;
