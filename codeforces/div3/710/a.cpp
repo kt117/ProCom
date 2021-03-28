@@ -13,7 +13,14 @@ const ll INF = 1e18;
 int main(){
     cin.tie(0); ios::sync_with_stdio(false);
     
-    
+    ll t; cin >> t;
+    while(t--){
+        ll n, m, x; cin >> n >> m >> x;
+        x--;
+        ll xx = x % n;
+        ll yy = x / n;
+        print(xx * m + yy + 1)
+    }
     
     return 0;
 }

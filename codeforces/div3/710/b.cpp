@@ -13,7 +13,35 @@ const ll INF = 1e18;
 int main(){
     cin.tie(0); ios::sync_with_stdio(false);
     
-    
+    ll t; cin >> t;
+    while(t--){
+        ll n, k; cin >> n >> k;
+        string s; cin >> s;
+
+        ll ans = 0;
+
+        zep(i, 0, n){
+            if(s[i] == '*'){
+                s[i] = 'x';
+                ans++;
+                break;
+            }
+        }
+
+        zep(i, 0, n){
+            if(s[i] == 'x'){
+                rrep(j, min(i + k, n - 1), i + 1){
+                    if(s[j] == '*'){
+                        s[j] = 'x';
+                        ans++;
+                        break;
+                    }
+                }
+            }
+        }
+        
+        print(ans)
+    }
     
     return 0;
 }
