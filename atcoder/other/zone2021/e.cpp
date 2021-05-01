@@ -1,0 +1,87 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef pair<ll, ll> P;
+const ll MOD = 1e9+7;
+const ll INF = 1e18;
+#define rep(i,m,n) for(ll i = (m); i <= (n); i++)
+#define zep(i,m,n) for(ll i = (m); i < (n); i++)
+#define rrep(i,m,n) for(ll i = (m); i >= (n); i--)
+#define print(x) cout << (x) << endl;
+#define printa(x,m,n) for(int i = (m); i <= n; i++){cout << (x[i]) << " ";} cout<<endl;
+
+struct dijkstra{
+    vector<long long> min_dst;
+    vector<vector<pair<long long, long long>>> G;
+
+    dijkstra(int n){
+        min_dst.resize(n);
+        G.resize(n);
+    }
+
+    void append(int u, int v, long long cost){G[u].push_back(make_pair(v, cost));}
+    
+    void run(int s){
+        priority_queue<pair<long long, long long>, vector<pair<long long, long long>>, greater<pair<long long, long long>>> que;
+        fill(min_dst.begin(), min_dst.end(), -1);
+        min_dst[s] = 0;
+        que.push(make_pair(0, s));
+        
+        while(!que.empty()){
+            auto p = que.top(); que.pop();
+            int at = p.second;
+            if(min_dst[at] < p.first){continue;}
+            for(int i = 0; i < G[at].size(); i++){
+                int to = G[at][i].first;
+                long long cost = G[at][i].second;
+                if(min_dst[to] == -1 || min_dst[at] + cost < min_dst[to]){
+                    min_dst[to] = min_dst[at] + cost;
+                    que.push(make_pair(min_dst[to], to));
+                }
+            }
+        }	
+    }
+    
+    long long get(int at){return min_dst[at];}
+};
+
+ll r, c, a[505][505], b[505][505];
+
+ll encode(ll i, ll j){
+    return i * c + j;
+}
+
+ll encode2(ll i, ll j){
+    return i * c + j + r * c;
+}
+
+int main(){
+    cin.tie(0); ios::sync_with_stdio(false);
+    
+    cin >> r >> c;
+    zep(i, 0, r)zep(j, 0, c - 1)cin >> a[i][j];
+    zep(i, 0, r - 1)zep(j, 0, c)cin >> b[i][j];
+
+    dijkstra d(2 * r * c);
+
+    zep(i, 0, r)zep(j, 0, c - 1){
+        d.append(encode(i, j), encode(i, j + 1), a[i][j]);
+        d.append(encode(i, j + 1), encode(i, j), a[i][j]);
+    }
+
+    zep(i, 0, r)zep(j, 0, c){
+        d.append(encode(i, j), encode2(i, j), 1);
+        d.append(encode2(i, j), encode(i, j), 0);
+    }
+
+    zep(i, 0, r - 1)zep(j, 0, c){
+        d.append(encode(i, j), encode(i + 1, j), b[i][j]);
+        d.append(encode2(i + 1, j), encode2(i, j), 1);
+    }
+
+    d.run(0);
+    //zep(i, 0, r){zep(j, 0, c)cout << d.get(encode(i, j)) << " "; cout << endl;}
+    print(d.get(encode(r - 1, c - 1)))
+    
+    return 0;
+}
