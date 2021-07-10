@@ -22,59 +22,9 @@ ll encode(string s){
     return h(s[0]) * 52 * 52 + h(s[1]) * 52 + h(s[2]);
 }
 
-vector<vector<ll>> g(52 * 52 * 52);
-vector<ll> ok(52 * 52 * 52, 0);
-vector<bool> use(52 * 52 * 52), use2(52 * 52 * 52);
-
-void memo(ll at){
-    use[at] = true;
-    if(g[at].size() == 0){ok[at] = -1; return;}
-
-    zep(i, 0, g[at].size()){
-        ll nx = g[at][i];
-        if(!use[nx])memo(nx);
-    }
-
-    bool allwin = true, anylose = false;
-    zep(i, 0, g[at].size()){
-        ll nx = g[at][i];
-        if(ok[nx] == -1)anylose = true;
-        if(ok[nx] != 1)allwin = false;
-    }
-
-    if(allwin){
-        ok[at] = -1;
-    }else if(anylose){
-        ok[at] = 1;
-    }else{
-        ok[at] = 0;
-    }
-}
-
-void memo2(ll at){
-    use2[at] = true;
-    if(g[at].size() == 0){ok[at] = -1; return;}
-    
-    zep(i, 0, g[at].size()){
-        ll nx = g[at][i];
-        if(!use2[nx])memo2(nx);
-    }
-
-    bool allwin = true, anylose = false;
-    zep(i, 0, g[at].size()){
-        ll nx = g[at][i];
-        if(ok[nx] == -1)anylose = true;
-        if(ok[nx] != 1)allwin = false;
-    }
-
-    if(allwin){
-        ok[at] = -1;
-    }else if(anylose){
-        ok[at] = 1;
-    }else{
-        ok[at] = 2;
-    }
-}
+const ll N = 52 * 52 * 52;
+vector<vector<ll>> g(N), rg(N);
+vector<ll> ok(N, 0);
 
 int main(){
     cin.tie(0); ios::sync_with_stdio(false);
@@ -82,31 +32,54 @@ int main(){
     ll n; cin >> n;
     string s[n]; zep(i, 0, n)cin >> s[i];
     
-    set<P> suse;
+    set<P> use;
     zep(i, 0, n){
         ll a = encode(s[i].substr(0, 3));
         ll b = encode(s[i].substr(s[i].size() - 3, 3));
         
-        if(suse.find(P(a, b)) == suse.end()){
-            suse.insert(P(a, b));
+        if(use.find(P(a, b)) == use.end()){
+            use.insert(P(a, b));
             g[a].push_back(b);
+            rg[b].push_back(a);
+        }
+    }
+
+    queue<ll> q;
+    zep(i, 0, N)if(g[i].size() == 0){
+        q.push(i);
+    }
+
+    while(!q.empty()){
+        ll at = q.front(); q.pop();
+
+        bool allwin = true, anylose = false;
+        zep(i, 0, g[at].size()){
+            ll nx = g[at][i];
+            if(ok[nx] == -1)anylose = true;
+            if(ok[nx] != 1)allwin = false;
+        }
+        if(anylose)ok[at] = 1;
+        if(allwin)ok[at] = -1;
+        
+        if(ok[at] != 0){
+            zep(i, 0, rg[at].size()){
+                ll nx = rg[at][i];
+                if(ok[nx] == 0)q.push(nx);
+            }
         }
     }
 
     zep(i, 0, n){
         ll b = encode(s[i].substr(s[i].size() - 3, 3));
-        
-        if(!use[b]){memo(b);}
-        if(!use2[b]){memo2(b);}
-
-        if(ok[b] == 1){
-            print("Aoki")
-        }else if(ok[b] == 2){
-            print("Draw")
-        }else{
+    
+        if(ok[b] == -1){
             print("Takahashi")
+        }else if(ok[b] == 1){
+            print("Aoki")
+        }else{
+            print("Draw")
         }
     }
-    
+
     return 0;
 }
