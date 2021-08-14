@@ -8,6 +8,8 @@ def create_file(path):
     with open("util/template.cpp") as f:
         s = f.read()
 
+    os.makedirs(path)
+
     for i in range(8):
         file_path = path + "/{}.cpp".format(str(chr(ord('a') + i)))
         if not os.path.isfile(file_path):
